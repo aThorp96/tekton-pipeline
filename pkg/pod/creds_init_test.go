@@ -118,7 +118,7 @@ func TestCredsInit(t *testing.T) {
 			"-basic-git=my-creds=gitlab.com",
 		},
 		wantVolumeMounts: []corev1.VolumeMount{{
-			Name:      "tekton-internal-secret-volume-my-creds-9l9zj",
+			Name:      "tekton-internal-secret-volume-my-creds-9l9zjprm28",
 			MountPath: "/tekton/creds-secrets/my-creds",
 		}},
 		ctx: t.Context(),
@@ -151,7 +151,7 @@ func TestCredsInit(t *testing.T) {
 			"-docker-config=my-docker-creds",
 		},
 		wantVolumeMounts: []corev1.VolumeMount{{
-			Name:      "tekton-internal-secret-volume-my-docker-creds-9l9zj",
+			Name:      "tekton-internal-secret-volume-my-docker-creds-9l9zjprm28",
 			MountPath: "/tekton/creds-secrets/my-docker-creds",
 		}},
 		ctx: t.Context(),
@@ -190,7 +190,7 @@ func TestCredsInit(t *testing.T) {
 			"-basic-git=my-creds=gitlab.com",
 		},
 		wantVolumeMounts: []corev1.VolumeMount{{
-			Name:      "tekton-internal-secret-volume-my-creds-9l9zj",
+			Name:      "tekton-internal-secret-volume-my-creds-9l9zjprm28",
 			MountPath: "/tekton/creds-secrets/my-creds",
 		}},
 		ctx: t.Context(),
@@ -254,7 +254,7 @@ func TestCredsInit(t *testing.T) {
 		envVars:  []corev1.EnvVar{},
 		wantArgs: []string{"-basic-docker=foo.bar.com=https://docker.io"},
 		wantVolumeMounts: []corev1.VolumeMount{{
-			Name:      "tekton-internal-secret-volume-foo-bar-com-9l9zj",
+			Name:      "tekton-internal-secret-volume-foo-bar-com-9l9zjprm28",
 			MountPath: "/tekton/creds-secrets/foo.bar.com",
 		}},
 		ctx: t.Context(),
@@ -287,7 +287,7 @@ func TestCredsInit(t *testing.T) {
 			"-basic-git=my-creds=github.com",
 		},
 		wantVolumeMounts: []corev1.VolumeMount{{
-			Name:      "tekton-internal-secret-volume-my-creds-9l9zj",
+			Name:      "tekton-internal-secret-volume-my-creds-9l9zjprm28",
 			MountPath: "/tekton/creds-secrets/my-creds",
 		}},
 		ctx: t.Context(),
@@ -322,7 +322,7 @@ func TestCredsInit(t *testing.T) {
 			"-basic-git=my-creds=github.com",
 		},
 		wantVolumeMounts: []corev1.VolumeMount{{
-			Name:      "tekton-internal-secret-volume-my-creds-9l9zj",
+			Name:      "tekton-internal-secret-volume-my-creds-9l9zjprm28",
 			MountPath: "/tekton/creds-secrets/my-creds",
 		}},
 		events: []string{

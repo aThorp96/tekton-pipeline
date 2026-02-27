@@ -39,28 +39,37 @@ type NameGenerator interface {
 	RestrictLength(base string) string
 }
 
+const (
+	// TODO: make this flexible for non-core resources with alternate naming rules.
+	maxNameLength             = 63
+	defaultRandomSuffixLength = 5
+)
+
 // simpleNameGenerator generates random names.
-type simpleNameGenerator struct{}
+type simpleNameGenerator struct {
+	randomSuffixLength int
+}
 
 // SimpleNameGenerator is a generator that returns the name plus a random suffix of five alphanumerics
 // when a name is requested. The string is guaranteed to not exceed the length of a standard Kubernetes
 // name (63 characters)
-var SimpleNameGenerator NameGenerator = simpleNameGenerator{}
+var SimpleNameGenerator NameGenerator = simpleNameGenerator{randomSuffixLength: defaultRandomSuffixLength}
 
-const (
-	// TODO: make this flexible for non-core resources with alternate naming rules.
-	maxNameLength          = 63
-	randomLength           = 5
-	maxGeneratedNameLength = maxNameLength - randomLength - 1
-)
+func NewSimpleNameGenerator(randomSuffixLength int) NameGenerator {
+	return simpleNameGenerator{randomSuffixLength}
+}
+
+func (sng simpleNameGenerator) maxGeneratedNameLength() int {
+	return maxNameLength - sng.randomSuffixLength - 1
+}
 
 // RestrictLengthWithRandomSuffix takes a base name and returns a potentially shortened version of that name with
 // a random suffix, with the whole string no longer than 63 characters.
-func (simpleNameGenerator) RestrictLengthWithRandomSuffix(base string) string {
-	if len(base) > maxGeneratedNameLength {
-		base = base[:maxGeneratedNameLength]
+func (sng simpleNameGenerator) RestrictLengthWithRandomSuffix(base string) string {
+	if len(base) > sng.maxGeneratedNameLength() {
+		base = base[:sng.maxGeneratedNameLength()]
 	}
-	return fmt.Sprintf("%s-%s", base, utilrand.String(randomLength))
+	return fmt.Sprintf("%s-%s", base, utilrand.String(sng.randomSuffixLength))
 }
 
 var alphaNumericRE = regexp.MustCompile(`^[a-zA-Z0-9]+$`)
@@ -80,7 +89,7 @@ func (simpleNameGenerator) RestrictLength(base string) string {
 // GenerateHashedName creates a unique name with a hashed suffix.
 func GenerateHashedName(prefix, name string, hashedLength int) string {
 	if hashedLength <= 0 {
-		hashedLength = randomLength
+		hashedLength = defaultRandomSuffixLength
 	}
 	h := fnv.New32a()
 	h.Write([]byte(name))

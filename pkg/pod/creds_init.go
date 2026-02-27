@@ -133,7 +133,9 @@ func credsInit(ctx context.Context, obj runtime.Object, serviceAccountName, name
 			// While secret names can use RFC1123 DNS subdomain name rules, the volume mount
 			// name required the stricter DNS label standard, for example no dots anymore.
 			sanitizedName := dnsLabel1123Forbidden.ReplaceAllString(secret.Name, "-")
-			name := names.SimpleNameGenerator.RestrictLengthWithRandomSuffix("tekton-internal-secret-volume-" + sanitizedName)
+			// Since there may be many secrets and secrets may have long prefixes, using higher random suffix in the generated name
+			// reduces the risk of secret-volume name collision.
+			name := names.NewSimpleNameGenerator(10).RestrictLengthWithRandomSuffix("tekton-internal-secret-volume-" + sanitizedName)
 			volumeMounts = append(volumeMounts, corev1.VolumeMount{
 				Name:      name,
 				MountPath: credmatcher.VolumeName(secret.Name),
