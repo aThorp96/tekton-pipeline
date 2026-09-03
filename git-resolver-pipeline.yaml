@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  generateName: git-resolver-
+spec:
+  workspaces:
+    - name: output
+  tasks:
+    - name: task1
+      workspaces:
+        - name: output
+      taskRef:
+        resolver: git
+        params:
+          - name: url
+            value: https://github.com/tektoncd/catalog.git
+          - name: revision
+            value: 55dd80ef1b83861613dce9080dfdf6656f1aecd4
+          - name: pathInRepo
+            value: task/git-clone/0.10/git-clone.yaml
+      params:
+        - name: url
+          value: https://github.com/kelseyhightower/nocode
+        - name: revision
+          value: master

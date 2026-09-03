@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: git-resolver-
+spec:
+  workspaces:
+    - name: output  # this workspace name must be declared in the Pipeline
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce  # access mode may affect how you can use this volume in parallel tasks
+          resources:
+            requests:
+              storage: 1Gi
+  pipelineRef:
+    resolver: git
+    params:
+      - name: url
+        value: https://github.com/athorp96/tektoncd-pipeline.git
+      - name: revision
+        value: # TODO
+      - name: pathInRepo
+        value: git-resolver-pipeline.yaml
