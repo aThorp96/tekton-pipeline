@@ -16,8 +16,8 @@ spec:
     resolver: git
     params:
       - name: url
-        value: https://github.com/athorp96/tektoncd-pipeline.git
+        value: https://github.com/aThorp96/tekton-pipeline.git
       - name: revision
-        value: c87f42200080aa8e4782298e9a08b24a46752f50
+        value: dc224a2a8a09b7a168986fe90e868690b0e9ccb1
       - name: pathInRepo
         value: git-resolver-pipeline.yaml
