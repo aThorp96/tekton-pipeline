@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
-  generateName: git-resolver-
+  name: git-resolver-test-size
 spec:
   workspaces:
     - name: output

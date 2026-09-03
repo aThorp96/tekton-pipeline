@@ -18,6 +18,6 @@ spec:
       - name: url
         value: https://github.com/athorp96/tektoncd-pipeline.git
       - name: revision
-        value: # TODO
+        value: c87f42200080aa8e4782298e9a08b24a46752f50
       - name: pathInRepo
         value: git-resolver-pipeline.yaml
