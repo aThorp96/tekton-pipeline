@@ -27,6 +27,6 @@ permissions:
 jobs:
   cherry-pick:
     name: Cherry Pick Actions
-    uses: tektoncd/plumbing/.github/workflows/_cherry-pick-command.yaml@9f8e1781d5cc431e5c95190a9fc14dfba1cec391  # main
+    uses: aThorp96/tektoncd-plumbing/.github/workflows/_cherry-pick-command.yaml@assign-cherry-picker-to-pr # experiment
     secrets:
       CHATOPS_TOKEN: ${{ secrets.CHATOPS_TOKEN }}

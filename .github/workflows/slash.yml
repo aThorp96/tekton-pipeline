@@ -41,24 +41,24 @@ jobs:
               "command": "retest",
               "permission": "write",
               "issue_type": "pull-request",
-              "repository": "tektoncd/pipeline"
+              "repository": "aThorp96/tektoncd-pipeline"
             },
             {
               "command": "e2e-extras",
               "permission": "write",
               "issue_type": "pull-request",
-              "repository": "tektoncd/pipeline"
+              "repository": "aThorp96/tektoncd-pipeline"
             },
             {
               "command": "cherry-pick",
               "permission": "write",
               "issue_type": "pull-request",
-              "repository": "tektoncd/pipeline"
+              "repository": "aThorp96/tektoncd-pipeline"
             },
             {
               "command": "rebase",
               "permission": "write",
               "issue_type": "pull-request",
-              "repository": "tektoncd/pipeline"
+              "repository": "aThorp96/tektoncd-pipeline"
             }
           ]
