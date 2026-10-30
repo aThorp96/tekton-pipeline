@@ -1,13 +1,15 @@
-ARG GO_BUILDER=registry.access.redhat.com/ubi9/go-toolset:latest@sha256:5e68f09a652ac6627a83c57655e42e24575efb278b54336039c9308607fc6b21
+ARG GO_BUILDER=registry.access.redhat.com/hi/go:1.27-fips-builder@sha256:b7a89799fe7ac875c0923329ea6cdcb61837027b5a44fa9f23a88101c05e833a
 ARG UBI_RUNTIME=registry.redhat.io/ubi9/ubi-minimal-pqc:latest@sha256:72187ec58a94bd958ff48e41881d7c5d8bc0b49586cc1661da5ba4d92374c206
+ARG GIT_BASE=registry.access.redhat.com/hi/git:latest
 
-FROM $UBI_RUNTIME as dependency-builder
+FROM $UBI_RUNTIME AS dependency-builder
 
 COPY dependencies/tini dependencies/tini
 WORKDIR /dependencies/tini
-RUN microdnf update && microdnf install -y cmake gcc
-ENV ENV CFLAGS="-DPR_SET_CHILD_SUBREAPER=36 -DPR_GET_CHILD_SUBREAPER=37"
+RUN microdnf update -y && microdnf install -y cmake gcc
+ENV CFLAGS="-DPR_SET_CHILD_SUBREAPER=36 -DPR_GET_CHILD_SUBREAPER=37"
 RUN cmake . && make tini
+RUN chmod 0755 /dependencies/tini/tini && chown root:root /dependencies/tini/tini
 
 FROM $GO_BUILDER AS builder
 
@@ -16,12 +18,11 @@ COPY upstream .
 COPY .konflux/patches patches/
 RUN set -e; for f in patches/*.patch; do echo ${f}; [[ -f ${f} ]] || continue; git apply ${f}; done
 COPY head HEAD
-ENV GOEXPERIMENT=strictfipsruntime
 ENV GODEBUG="http2server=0"
 RUN go build -ldflags="-X 'knative.dev/pkg/changeset.rev=$(cat HEAD)'" -mod=vendor -tags disable_gcp,strictfipsruntime -v -o /tmp/resolvers \
     ./cmd/resolvers
 
-FROM $UBI_RUNTIME
+FROM $GIT_BASE
 ARG VERSION=next
 
 ENV RESOLVERS=/usr/local/bin/resolvers \
@@ -32,7 +33,6 @@ COPY --from=builder /tmp/resolvers /ko-app/resolvers
 COPY head ${KO_DATA_PATH}/HEAD
 
 COPY --from=dependency-builder /dependencies/tini/tini /sbin/tini
-RUN chmod 0755 /sbin/tini && chown root:root /sbin/tini
 
 LABEL \
     com.redhat.component="openshift-pipelines-resolvers-rhel9-container" \
@@ -46,11 +46,7 @@ LABEL \
     summary="Red Hat OpenShift Pipelines tektoncd-pipeline resolvers" \
     version="next"
 
-RUN microdnf update && microdnf install -y git && microdnf clean all
-
-RUN groupadd -r -g 65532 nonroot && \
-    useradd --no-log-init -r -u 65532 -g nonroot nonroot
-USER 65532
+USER 65532:65532
 
 ENTRYPOINT ["/sbin/tini", "--", "/ko-app/resolvers"]
 

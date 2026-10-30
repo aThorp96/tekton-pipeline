@@ -1,5 +1,5 @@
-ARG GO_BUILDER=registry.access.redhat.com/ubi9/go-toolset:latest@sha256:5e68f09a652ac6627a83c57655e42e24575efb278b54336039c9308607fc6b21
-ARG UBI_RUNTIME=registry.redhat.io/ubi9/ubi-minimal-pqc:latest@sha256:72187ec58a94bd958ff48e41881d7c5d8bc0b49586cc1661da5ba4d92374c206
+ARG GO_BUILDER=registry.access.redhat.com/hi/go:1.27-fips-builder@sha256:b7a89799fe7ac875c0923329ea6cdcb61837027b5a44fa9f23a88101c05e833a
+ARG UBI_RUNTIME=registry.access.redhat.com/hi/go:1.27@sha256:661c9318bad795f5b9e5a851ae045dab81519e9c5b2e96b7879c074faf0882c8
 
 FROM $GO_BUILDER AS builder
 
@@ -8,7 +8,7 @@ COPY upstream .
 COPY .konflux/patches patches/
 RUN set -e; for f in patches/*.patch; do echo ${f}; [[ -f ${f} ]] || continue; git apply ${f}; done
 COPY head HEAD
-ENV GOEXPERIMENT=strictfipsruntime
+# ENV GOEXPERIMENT=strictfipsruntime
 ENV GODEBUG="http2server=0"
 RUN go build -ldflags="-X 'knative.dev/pkg/changeset.rev=$(cat HEAD)'" -mod=vendor -tags disable_gcp,strictfipsruntime -v -o /tmp/controller \
     ./cmd/controller
@@ -35,9 +35,7 @@ LABEL \
     summary="Red Hat OpenShift Pipelines tektoncd-pipeline controller" \
     version="next"
 
-RUN groupadd -r -g 65532 nonroot && \
-    useradd --no-log-init -r -u 65532 -g nonroot nonroot
-USER 65532
+USER 65532:65532
 
 ENTRYPOINT ["/ko-app/controller"]
 
